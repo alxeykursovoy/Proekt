@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Наши товары</h2>
+
+<div class="filters">
+    <h3>Фильтры:</h3>
+    <form method="get">
+        <select name="category">
+            <option value="">Все категории</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+            {% endfor %}
+        </select>
+        
+        <div class="tags-filter">
+            {% for tag in tags %}
+            <label>
+                <input type="radio" name="tag" value="{{ tag.id }}" {% if selected_tag == tag.id %}checked{% endif %}>
+                {{ tag.name }}
+            </label>
+            {% endfor %}
+        </div>
+        
+        <button type="submit">Применить</button>
+        <a href="{% url 'products' %}">Сбросить</a>
+    </form>
+</div>
+
+{% if request.user.is_staff %}
+<a href="{% url 'add_product' %}" class="btn">Добавить товар</a>
+{% endif %}
+
+<div class="product-list">
+    {% for product in products %}
+    <div class="product">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% endif %}
+        <h3>{{ product.name }}</h3>
+        <p class="price">Цена: {{ product.price }} руб.</p>
+        <p>{{ product.description|truncatechars:100 }}</p>
+        <p><strong>Категория:</strong> {{ product.category.name|default:"Без категории" }}</p>
+        <p>
+            <strong>Теги:</strong>
+            {% for tag in product.tags.all %}
+            <span class="tag">{{ tag.name }}</span>
+            {% empty %}
+            Нет тегов
+            {% endfor %}
+        </p>
+    </div>
+    {% empty %}
+    <p>Товары не найдены</p>
+    {% endfor %}
+</div>
+{% endblock %}

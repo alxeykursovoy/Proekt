@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>О нашем магазине</h2>
+<div class="about-info">
+    <p>Мы работаем на рынке рыболовных товаров более 10 лет и за это время заслужили доверие тысяч клиентов.</p>
+    
+    <h3>Форма обратной связи</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Отправить</button>
+    </form>
+    
+    <div class="feedback-list">
+        <h3>Последние обращения:</h3>
+        {% if feedbacks %}
+            {% for feedback in feedbacks %}
+            <div class="feedback-item">
+                <p><strong>{{ feedback.name }}</strong> ({{ feedback.get_feedback_type_display }})</p>
+                <p>{{ feedback.message|truncatechars:100 }}</p>
+                <small>{{ feedback.created_at }}</small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Пока нет обращений. Будьте первым!</p>
+        {% endif %}
+    </div>
+    
+    <!-- Остальной контент страницы -->
+    <h3>Наша миссия:</h3>
+    <p>Сделать рыбалку доступной и комфортной для каждого...</p>
+    <!-- ... -->
+</div>
+{% endblock %}
